@@ -2,7 +2,7 @@
   "name": "@code-lab/init",
   "version": "0.1.0",
   "description": "init project",
-  "author": "兰亭古墨 <2443992009@qq.com>",
+  "author": "hefeng6500 <2443992009@qq.com>",
   "homepage": "https://github.com/HeFeng-Lab/core-cli#readme",
   "license": "MIT",
   "main": "lib/index.js",
