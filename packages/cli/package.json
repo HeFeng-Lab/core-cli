@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "description": "HeFeng-Lab Core CLI",
   "author": "hefeng6500 <2443992009@qq.com>",
-  "homepage": "https://github.com/HeFeng-Lab/cli-lesson#readme",
+  "homepage": "https://github.com/HeFeng-Lab/core-cli",
   "license": "MIT",
   "main": "lib/index.js",
   "type": "module",
@@ -24,13 +24,13 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/HeFeng-Lab/cli-lesson.git"
+    "url": "git+https://github.com/HeFeng-Lab/core-cli"
   },
   "scripts": {
     "test": "node ./__tests__/cli.test.js"
   },
   "bugs": {
-    "url": "https://github.com/HeFeng-Lab/cli-lesson/issues"
+    "url": "https://github.com/HeFeng-Lab/core-cli/issues"
   },
   "dependencies": {
     "chalk": "^5.3.0",
@@ -39,6 +39,5 @@
     "import-local": "^3.1.0",
     "npmlog": "^7.0.1",
     "ora": "^7.0.1"
-  },
-  "gitHead": "23096ba8949cf0d65c68981b4e5af814d34d10be"
+  }
 }
