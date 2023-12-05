@@ -15,7 +15,10 @@ class InitCommand extends Command {
   }
 
   get options() {
-    return [["-t, --template <template>", "template name"]]
+    return [
+      ["-t, --template <template>", "template name"],
+      ["-f, --force", "Enable force creation of the template"],
+    ]
   }
 
   async action([name, options]) {
@@ -28,10 +31,15 @@ class InitCommand extends Command {
     log.verbose("selectedTemplate", selectedTemplate)
 
     // 2. 下载模板
-    downloadTemplate(selectedTemplate)
+    const { targetPath } = await downloadTemplate(selectedTemplate)
 
     // 3. 安装模板
-    installTemplate(selectedTemplate, options)
+    installTemplate({
+      name: selectedTemplate.name,
+      selectedTemplate,
+      options,
+      targetPath,
+    })
   }
 }
 

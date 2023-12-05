@@ -45,6 +45,10 @@ export default async function downloadTemplate(selectedTemplate) {
     spinner.stop()
 
     log.success("Download successfully!")
+
+    return {
+      targetPath,
+    }
   } catch (error) {
     printErrorLog(error)
 

@@ -1,4 +1,4 @@
-import { log, makeList } from "@code-lab/utils"
+import { log, makeInput, makeList } from "@code-lab/utils"
 
 const PROJECT = "project"
 const PAGE = "page"
@@ -34,6 +34,24 @@ const ADD_TEMPLATES = [
   },
 ]
 
+function getProjectName() {
+  return makeInput({
+    message: "Please input project name",
+    defaultValue: "",
+    validate(v) {
+      if (!v.length) {
+        return "Project name is required."
+      }
+
+      if (!/^[a-zA-Z0-9_-]+$/.test(v)) {
+        return "Project name patter is /^[a-zA-Z0-9_-]+$/"
+      }
+
+      return true
+    },
+  })
+}
+
 async function createTemplate(name, options) {
   // 匹配 --template template-name
   const { template } = options
@@ -44,7 +62,14 @@ async function createTemplate(name, options) {
     defaultValue: PROJECT,
   })
 
+  let projectName
+
   if (addType === PROJECT) {
+    if (name) {
+      projectName = name
+    } else {
+      projectName = await getProjectName()
+    }
     let templateName
     if (template) {
       const item = ADD_TEMPLATES.find((t) => t.value === template)
@@ -67,7 +92,7 @@ async function createTemplate(name, options) {
 
     return {
       type: addType,
-      name: templateName,
+      name: projectName,
       template: selectedTemplate,
     }
   } else {
