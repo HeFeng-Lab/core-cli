@@ -1,8 +1,7 @@
-import { program } from "commander";
-import { log, makeList } from "@code-lab/utils";
+import { program } from "commander"
+import { log, makeList } from "@code-lab/utils"
 
 export default function () {
-
   program
     .name("core-cli")
     .usage("command [global options]")
@@ -11,18 +10,18 @@ export default function () {
     .option("-v, --version", "Cli version.")
     .option("-s, --separator <char>")
     .hook("preAction", () => {
-      log.info("core-cli", "preAction");
-    });
+      log.info("core-cli", "preAction")
+    })
 
   program.on("option:debug", function () {
     if (program.opts().debug) {
-      log.verbose("Launch debugger mode");
+      log.verbose("Launch debugger mode")
     }
-  });
+  })
 
   program.on("command:*", function (obj) {
-    log.error("Command not found: " + obj[0]);
-  });
+    log.error("Command not found: " + obj[0])
+  })
 
   return program
 }

@@ -4,8 +4,10 @@
   "workspaces": [
     "packages/*"
   ],
-  "dependencies": {},
   "devDependencies": {
     "lerna": "^8.0.0"
+  },
+  "dependencies": {
+    "@code-lab/vue3-template": "^0.1.0"
   }
 }

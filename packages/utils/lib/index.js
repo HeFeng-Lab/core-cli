@@ -1,4 +1,4 @@
-import log from "./log.js";
-import { makeList, makeInput, markPassword } from "./inquirer.js";
+import { log, printErrorLog } from "./log.js"
+import { makeList, makeInput, markPassword } from "./inquirer.js"
 
-export { log, makeList, makeInput, markPassword };
+export { log, printErrorLog, makeList, makeInput, markPassword }

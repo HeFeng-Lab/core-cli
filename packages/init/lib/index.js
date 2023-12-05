@@ -1,63 +1,42 @@
-import { log, makeList } from "@code-lab/utils";
+import { log } from "@code-lab/utils"
+import Command from "@code-lab/command"
 
-export default function createInitCommand(program) {
-  const PROJECT = "project";
-  const PAGE = "page";
-  const PROJECT_TYPES = [
-    {
-      name: "project",
-      value: PROJECT
-    },
-    {
-      name: "page",
-      value: PAGE
-    }
-  ]
+import createTemplate from "./createTemplate.js"
+import downloadTemplate from "./downloadTemplate.js"
+import installTemplate from "./installTemplate.js"
 
-  const ADD_TEMPLATES = [
-    {
-      name: "Vue3 Template",
-      value: "vue3-template"
-    },
-    {
-      name: "React18 Template",
-      value: "react18-template"
-    },
-    {
-      name: "Vue Admin Template",
-      value: "vue-admin-template"
-    },
-  ]
+class InitCommand extends Command {
+  get command() {
+    return "init [name]"
+  }
 
-  program
-    .command("init [name]")
-    .description("init project")
-    .option("-t, --type <type>", "Init project type project or page.")
-    .option("-tp, --template <template-name>", "Template name to use")
-    .hook("preAction", () => {
-      log.verbose("preAction");
-    })
-    .hook("postAction", () => {
-      log.verbose("postAction");
-    })
-    .action(async (str, options) => {
-      console.log(str, options);
+  get description() {
+    return "init your project"
+  }
 
-      const addType = await makeList({
-        choices: PROJECT_TYPES
-      })
+  get options() {
+    return [["-t, --template <template>", "template name"]]
+  }
 
-      console.log(addType)
+  async action([name, options]) {
+    log.verbose("name", name)
+    log.verbose("options", options)
 
-      if (addType === PROJECT) {
-        const templateType = await makeList({
-          choices: ADD_TEMPLATES
-        })
+    // 1. 选择模板
+    const selectedTemplate = await createTemplate(name, options)
 
-        console.log(templateType)
+    log.verbose("selectedTemplate", selectedTemplate)
 
-      } else {
-        log.error("The creation of this type is not supported.")
-      }
-    });
+    // 2. 下载模板
+    downloadTemplate(selectedTemplate)
+
+    // 3. 安装模板
+    installTemplate(selectedTemplate, options)
+  }
 }
+
+const init = (instance) => {
+  return new InitCommand(instance)
+}
+
+export default init

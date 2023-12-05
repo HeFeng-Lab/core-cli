@@ -11,4 +11,12 @@ log.heading = "core-cli"
 
 log.addLevel("success", 2000, { fg: "green", bold: true })
 
-export default log
+function printErrorLog(e, type) {
+  if (isDebug()) {
+    log.error(type, e)
+  } else {
+    log.error(type, e.message)
+  }
+}
+
+export { log, printErrorLog }
