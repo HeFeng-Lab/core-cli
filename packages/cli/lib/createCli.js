@@ -1,11 +1,14 @@
 import { program } from "commander"
-import { log, makeList } from "@code-lab/utils"
+import { log, readFileInfo } from "@code-lab/utils"
+
+const pkg = readFileInfo("../package.json")
 
 export default function () {
   program
     .name("core-cli")
     .usage("command [global options]")
     .description("Code Labs core CLI.")
+    .version(`v${pkg.version}`)
     .option("-d, --debug", "Enable open debugger mode.", false)
     .option("-v, --version", "Cli version.")
     .option("-s, --separator <char>")
