@@ -6,7 +6,7 @@ export default function (args) {
   const program = createCli()
 
   createInitCommand(program)
-  // createInstallCommand(program)
+  createInstallCommand(program)
 
   program.parse(process.argv)
 }
