@@ -86,8 +86,6 @@ class InstallCommand extends Command {
     }
 
     this.resetPagination()
-
-    await this.search()
   }
 
   async search() {
@@ -103,17 +101,17 @@ class InstallCommand extends Command {
 
     if (searchMode === "repository") {
       const params = {
-        q: language ? `q=${encodeURIComponent(`${searchKeyword}+language:${language}`)}` : searchKeyword,
-        sort: "stars",
-        order: "desc",
-        per_page,
-        page,
+        q: language ? `${searchKeyword}+language:${language}` : searchKeyword,
+        // sort: "stars",
+        // order: "desc",
+        // per_page,
+        // page,
       }
       log.verbose("params", params)
       result = await this.platformApi.searchRepositories(params)
     } else if (searchMode === "code") {
       const params = {
-        q: language ? `q=${searchKeyword}+language:${language}` : searchKeyword,
+        q: language ? `${encodeURIComponent(`${searchKeyword}+language:${language}`)}` : searchKeyword,
         sort: "stars",
         order: "desc",
         per_page,
@@ -143,8 +141,11 @@ class InstallCommand extends Command {
     const { name: fullName } = await makeRawList({
       message: "Please select a project",
       choices: this.searchResult.map(({ full_name, description, clone_url, tags_url }) => {
+
+        const simpleDescription = description?.length > 100 ? `${description.slice(0, 100)}...` : description
+
         return {
-          name: `${full_name}(${description?.length > 100 ? description.slice(100) : description || ""})`,
+          name: `${full_name}(${simpleDescription})`,
           value: {
             name: full_name,
             description,

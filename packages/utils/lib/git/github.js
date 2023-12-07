@@ -14,14 +14,20 @@ export default class Github extends GitServer {
     this.service = createAxiosInstance({
       axiosOptions: {
         baseURL: "https://api.github.com",
+        headers: {
+          "Authorization": `Bearer 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`,
+          "Accept": "application/vnd.github+json"
+        }
       },
-      requestConfigCallback: (config) => {
-        config.headers["Authorization"] = `Bearer ${this.token}`
+      // requestConfigCallback: (config) => {
+      //   console.log("config", config)
+      //   // config.headers["Authorization"] = `Bearer ${this.token}`
+      //   config.headers["Authorization"] = `Bearer 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`
+      //   // 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
+      //   config.headers["Accept"] = "application/vnd.github+json"
 
-        config.headers["Accept"] = "application/vnd.github+json"
-
-        return config
-      },
+      //   return config
+      // },
       responseInterceptorsCallback: (response) => {
         if (response.status === 200) {
           return response.data

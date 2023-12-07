@@ -14,7 +14,8 @@ const createAxiosInstance = ({ axiosOptions, requestConfigCallback, responseInte
 
   instance.interceptors.request.use(
     function (config) {
-      return requestConfigCallback(config)
+      console.log(config)
+      return requestConfigCallback ? requestConfigCallback(config) : config
     },
     function (error) {
       return Promise.reject(error)
