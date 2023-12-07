@@ -33,7 +33,10 @@ jobs:
           registry-url: https://registry.npmjs.org/
 
       - name: Install dependencies
-        run: npm ci
+        run: |
+          npm ci
+          git config user.name "hefeng6500"
+          git config user.email "2443992009@qq.com"
 
       - name: Semantic Release
         env:
