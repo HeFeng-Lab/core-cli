@@ -28,3 +28,4 @@ you can use `core-cli init my-app --template vue3-template -debug` create a pres
 
 - vue3-template
 - react18-template
+- geeker-admin-template
