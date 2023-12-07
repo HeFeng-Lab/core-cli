@@ -29,6 +29,7 @@
     "access": "public"
   },
   "dependencies": {
-    "@code-lab/command": "^0.3.0"
+    "@code-lab/command": "^0.3.0",
+    "@code-lab/utils": "^0.3.1"
   }
 }

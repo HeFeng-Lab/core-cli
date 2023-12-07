@@ -27,9 +27,9 @@ const ADD_TEMPLATES = [
     version: "0.1.0",
   },
   {
-    name: "vue-admin-template",
-    value: "vue-admin-template",
-    npmName: "@code-lab/vue-admin-template",
+    name: "geeker-admin-template",
+    value: "geeker-admin-template",
+    npmName: "@code-lab/geeker-admin-template",
     version: "0.1.0",
   },
 ]

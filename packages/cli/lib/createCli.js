@@ -13,7 +13,7 @@ export default function () {
     .option("-v, --version", "Cli version.")
     .option("-s, --separator <char>")
     .hook("preAction", () => {
-      log.info("core-cli", "preAction")
+      log.verbose("core-cli", "preAction")
     })
 
   program.on("option:debug", function () {
