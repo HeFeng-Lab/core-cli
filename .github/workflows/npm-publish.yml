@@ -5,24 +5,24 @@ name: Node.js Package
 
 on:
   push:
-    branches: 
+    branches:
       - main
   # release:
   # types: [created]
 
 jobs:
-  # build:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - uses: actions/checkout@v3
-  #     - uses: actions/setup-node@v3
-  #       with:
-  #         node-version: 20.10.0
-  #     - run: npm ci
-  #     - run: npm test
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20.10.0
+      - run: npm ci
+      - run: npm test
 
   publish-npm:
-    # needs: build
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -32,7 +32,7 @@ jobs:
           registry-url: https://registry.npmjs.org/
       - name: Install dependencies
       - run: npm ci
-      
+
       - name: Semantic Release
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
