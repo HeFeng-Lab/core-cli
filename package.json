@@ -4,9 +4,11 @@
     "packages/*"
   ],
   "devDependencies": {
-    "lerna": "^8.0.0"
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/npm": "^11.0.1",
+    "lerna": "^8.0.0",
+    "semantic-release": "^22.0.10"
   },
-  "dependencies": {
-    "@code-lab/vue3-template": "^0.1.0"
-  }
+  "dependencies": {}
 }
