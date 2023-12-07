@@ -10,19 +10,31 @@ on:
   # release:
   # types: [created]
 
+permissions:
+  contents: read # for checkout
+
 jobs:
-  build:
+  release:
+    name: Release
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout source code
-        uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 20.10.0
-      - run: npm ci
+    permissions:
+      contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
+      id-token: write # to enable use of OIDC for npm provenance
+
+  # build:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout source code
+  #       uses: actions/checkout@v3
+  #     - uses: actions/setup-node@v3
+  #       with:
+  #         node-version: 20.10.0
+  #     - run: npm ci
 
   publish-npm:
-    needs: build
+    # needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout source code
