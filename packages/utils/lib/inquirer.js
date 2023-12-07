@@ -1,9 +1,12 @@
 import inquirer from "inquirer"
+import { log } from "./log.js"
 
 export function make(options) {
   const questions = { name: "name", mask: "*", default: options.defaultValue, ...options }
 
-  if (options.type === "list") {
+  log.verbose("options.type", options.type)
+
+  if (["list", "rawlist"].includes(options.type)) {
     questions.choices = options.choices
   }
   if (options.type === "input") {
@@ -30,6 +33,13 @@ const makeList = (params) => {
   })
 }
 
+const makeRawList = (params) => {
+  return make({
+    type: "rawlist",
+    ...params,
+  })
+}
+
 const makeInput = (params) => {
   return make({
     type: "input",
@@ -44,4 +54,4 @@ const markPassword = (params) => {
   })
 }
 
-export { makeList, makeInput, markPassword }
+export { makeList, makeRawList, makeInput, markPassword }
