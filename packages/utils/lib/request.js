@@ -10,11 +10,15 @@ const createAxiosInstance = ({ axiosOptions, requestConfigCallback, responseInte
       "content-type": "application/json",
       ...headers,
     },
+    paramsSerializer: (params) => {
+      return Object.keys(params)
+        .map((key) => `${key}=${params[key]}`)
+        .join("&")
+    },
   })
 
   instance.interceptors.request.use(
     function (config) {
-      console.log(config)
       return requestConfigCallback ? requestConfigCallback(config) : config
     },
     function (error) {

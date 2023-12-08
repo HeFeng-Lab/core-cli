@@ -10,10 +10,12 @@ class InstallCommand extends Command {
     this.searchResult = []
 
     this.pagination = {
-      per_page: 10,
+      per_page: 30,
       page: 1,
       total: 0,
     }
+
+    this.selectProject = {}
   }
   get command() {
     return "install"
@@ -30,11 +32,11 @@ class InstallCommand extends Command {
     // 2.提示输入搜索相关条件
     await this.promptSearchCondition()
 
-    // 3. 搜索
+    // 3. 搜索并选择 repo
     await this.search()
 
-    // 4. 选择项目、Tag/version
-    await this.chooseProject()
+    // 4. 搜索并选择 tag
+    await this.searchTags()
 
     // 5. 下载
 
@@ -90,7 +92,52 @@ class InstallCommand extends Command {
 
   async search() {
     this.searchResult = await (this.platformApi.plateform === "github" ? this.searchGithub() : this.searchGitee())
-    return this.searchResult
+
+    this.searchResult = this.searchResult.map(({ full_name, description }, index) => {
+      const simpleDescription = description?.length > 100 ? `${description.slice(0, 100)}...` : description
+
+      const newIndex = (this.pagination.page - 1) * this.pagination.per_page + index + 1
+
+      return {
+        name: `${newIndex}) ${full_name}(${simpleDescription})`,
+        value: full_name,
+      }
+    })
+
+    if (this.pagination.page > 1) {
+      this.searchResult.unshift({
+        name: "Prev Page",
+        value: "prev",
+      })
+    }
+
+    const totalPage = parseInt(this.pagination.total / this.pagination.per_page)
+
+    if (this.pagination.page < totalPage) {
+      this.searchResult.push({
+        name: "Next Page",
+        value: "next",
+      })
+    }
+
+    const selectProjectName = await makeList({
+      message: "Please select a project",
+      choices: this.searchResult,
+    })
+
+    log.verbose("selectProjectName", selectProjectName)
+
+    if (selectProjectName === "prev") {
+      this.pagination.page -= 1
+      await this.search()
+    } else if (selectProjectName === "next") {
+      this.pagination.page += 1
+      await this.search()
+    } else {
+      this.selectProject.name = selectProjectName
+    }
+
+    return selectProjectName
   }
 
   async searchGithub() {
@@ -102,16 +149,16 @@ class InstallCommand extends Command {
     if (searchMode === "repository") {
       const params = {
         q: language ? `${searchKeyword}+language:${language}` : searchKeyword,
-        // sort: "stars",
-        // order: "desc",
-        // per_page,
-        // page,
+        sort: "stars",
+        order: "desc",
+        per_page,
+        page,
       }
       log.verbose("params", params)
       result = await this.platformApi.searchRepositories(params)
     } else if (searchMode === "code") {
       const params = {
-        q: language ? `${encodeURIComponent(`${searchKeyword}+language:${language}`)}` : searchKeyword,
+        q: language ? `${searchKeyword}+language:${language}` : searchKeyword,
         sort: "stars",
         order: "desc",
         per_page,
@@ -131,59 +178,58 @@ class InstallCommand extends Command {
 
   resetPagination() {
     this.pagination = {
-      per_page: 10,
+      per_page: 30,
       page: 1,
       total: 0,
     }
   }
 
-  async chooseProject() {
-    const { name: fullName } = await makeRawList({
-      message: "Please select a project",
-      choices: this.searchResult.map(({ full_name, description, clone_url, tags_url }) => {
-
-        const simpleDescription = description?.length > 100 ? `${description.slice(0, 100)}...` : description
-
-        return {
-          name: `${full_name}(${simpleDescription})`,
-          value: {
-            name: full_name,
-            description,
-            gitUrl: clone_url,
-            tagUrl: tags_url,
-          },
-        }
-      }),
-    })
-
-    await this.searchTags(fullName)
-
-    await makeRawList({
-      message: "Please select a tag",
-      choices: this.tagList.map(({ name }) => {
-        return {
-          name,
-          value: name,
-        }
-      }),
-    })
-  }
-
-  async searchTags(fullName) {
-    this.resetPagination()
-
+  async searchTags() {
+    const { per_page, page } = this.pagination
     const params = {
-      per_page: 9999,
-      page: 1,
+      per_page,
+      page,
     }
 
-    const result = await this.platformApi.searchTags(fullName, params)
+    const result = await this.platformApi.searchTags(this.selectProject.name, params)
 
-    // this.pagination.total = result.length
+    this.tagList = result.map(({ name }, index) => {
+      const newIndex = (this.pagination.page - 1) * this.pagination.per_page + index + 1
 
-    this.tagList = result
+      return {
+        name: `${newIndex}) ${name}`,
+        value: name,
+      }
+    })
 
-    return result
+    if (this.pagination.page > 1) {
+      this.tagList.unshift({
+        name: "Prev Page",
+        value: "prev",
+      })
+    }
+
+    this.tagList.push({
+      name: "Next Page",
+      value: "next",
+    })
+
+    let tag = await makeList({
+      message: "Please select a tag",
+      choices: this.tagList,
+    })
+
+    log.verbose("tag", tag)
+
+    if (tag === "prev") {
+      this.pagination.page -= 1
+      await this.searchTags()
+    } else if (tag === "next") {
+      this.pagination.page += 1
+      await this.searchTags()
+    }
+
+    return tag
   }
 }
 
