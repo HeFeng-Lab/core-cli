@@ -47,11 +47,11 @@ const makeInput = (params) => {
   })
 }
 
-const markPassword = (params) => {
+const makePassword = (params) => {
   return make({
     type: "password",
     ...params,
   })
 }
 
-export { makeList, makeRawList, makeInput, markPassword }
+export { makeList, makeRawList, makeInput, makePassword }

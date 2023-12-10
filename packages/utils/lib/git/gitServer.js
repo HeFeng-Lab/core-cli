@@ -1,19 +1,37 @@
 import path from "node:path"
+import fs from "node:fs"
 import { $, execa } from 'execa';
 import fse from "fs-extra";
 import { pathExistsSync } from 'path-exists';
 import { log } from "../log.js";
-import { getProjectPath, readFileInfo } from "../utils.js";
+import { makePassword } from "../inquirer.js"
+import { getProjectPath, createTokenPath } from "../utils.js";
 
 export default class GitServer {
   constructor () {
     this.token = null
-
-    this.init()
   }
 
-  init () {
-    // 读取 token
+  async init () {
+    const tokenPath = createTokenPath();
+
+    if (pathExistsSync(tokenPath)) {
+      console.log("tokenPath", tokenPath)
+      this.token = fse.readFileSync(tokenPath).toString();
+    } else {
+      this.token = await this.getToken();
+      fs.writeFileSync(tokenPath, this.token);
+    }
+    log.verbose('token', this.token);
+  }
+
+  getToken () {
+    return makePassword({
+      message: 'Please enter token',
+      validate(value) {
+        return !!value.length;
+      },
+    });
   }
 
   get (url, params, headers) {
@@ -67,7 +85,7 @@ export default class GitServer {
       const { scripts, bin, name } = pkg
 
       if (bin) {
-        await execa('pnpm', ['install', '-g', name, "--registry=https://registry.npmmirror.com"],  {
+        await execa('pnpm', ['install', '-g', name, "--registry=https://registry.npmmirror.com"], {
           cwd: projectPath,
           stdout: "inherit"
         })

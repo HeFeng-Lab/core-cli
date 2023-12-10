@@ -52,6 +52,7 @@ class InstallCommand extends Command {
 
   async choosePlatform() {
     this.platformApi = await initPlatform()
+    await this.platformApi.init()
   }
 
   async promptSearchCondition() {
@@ -72,10 +73,7 @@ class InstallCommand extends Command {
     const searchKeyword = await makeInput({
       message: "Please enter keyword",
       validate(value) {
-        if (!value.length) {
-          return false
-        }
-        return true
+        return !!value.length;
       },
     })
     log.verbose("search keyword", searchKeyword)

@@ -17,8 +17,7 @@ export default class Github extends GitServer {
         headers: {},
       },
       requestConfigCallback: (config) => {
-        // config.headers["Authorization"] = `Bearer ${this.token}`
-        config.headers["Authorization"] = `Bearer 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`
+        config.headers["Authorization"] = `Bearer ${this.token}`
         config.headers["Accept"] = "application/vnd.github+json"
 
         return config
