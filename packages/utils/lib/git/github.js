@@ -18,7 +18,7 @@ export default class Github extends GitServer {
       },
       requestConfigCallback: (config) => {
         // config.headers["Authorization"] = `Bearer ${this.token}`
-        config.headers["Authorization"] = `Bearer xxx`
+        config.headers["Authorization"] = `Bearer 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`
         config.headers["Accept"] = "application/vnd.github+json"
 
         return config
@@ -42,5 +42,9 @@ export default class Github extends GitServer {
 
   searchTags(fullName, params) {
     return this.get(`/repos/${fullName}/tags`, params)
+  }
+
+  getRepositoryUrl(fullName) {
+    return `https://github.com/${fullName}.git`;
   }
 }

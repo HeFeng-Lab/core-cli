@@ -1,5 +1,6 @@
 import Command from "@code-lab/command"
-import { initPlatform, makeInput, makeList, makeRawList, log } from "@code-lab/utils"
+import { initPlatform, makeInput, makeList, makeRawList, log, printErrorLog } from "@code-lab/utils"
+import ora, { spinners } from 'ora';
 
 class InstallCommand extends Command {
   constructor(instance) {
@@ -17,6 +18,7 @@ class InstallCommand extends Command {
 
     this.selectProject = {}
   }
+
   get command() {
     return "install"
   }
@@ -38,11 +40,14 @@ class InstallCommand extends Command {
     // 4. 搜索并选择 tag
     await this.searchTags()
 
-    // 5. 下载
+    // 5. 下载仓库
+    await this.downloadRepository(this.selectProject.name, this.selectProject.tag)
 
-    // 6. 安装
+    // 6. 安装依赖
+    await this.installDependencies()
 
     // 7. 启动
+    await this.running()
   }
 
   async choosePlatform() {
@@ -58,7 +63,7 @@ class InstallCommand extends Command {
           name: "Repository",
           value: "repository",
         },
-        { name: "Code", value: "code" },
+        {name: "Code", value: "code"},
       ],
     })
     log.verbose("search mode", searchMode)
@@ -93,7 +98,7 @@ class InstallCommand extends Command {
   async search() {
     this.searchResult = await (this.platformApi.plateform === "github" ? this.searchGithub() : this.searchGitee())
 
-    this.searchResult = this.searchResult.map(({ full_name, description }, index) => {
+    this.searchResult = this.searchResult.map(({full_name, description}, index) => {
       const simpleDescription = description?.length > 100 ? `${description.slice(0, 100)}...` : description
 
       const newIndex = (this.pagination.page - 1) * this.pagination.per_page + index + 1
@@ -141,8 +146,8 @@ class InstallCommand extends Command {
   }
 
   async searchGithub() {
-    const { searchMode, searchKeyword, language } = this.condition
-    const { per_page, page } = this.pagination
+    const {searchMode, searchKeyword, language} = this.condition
+    const {per_page, page} = this.pagination
 
     let result = []
 
@@ -167,14 +172,15 @@ class InstallCommand extends Command {
       result = await this.platformApi.searchCode(params)
     }
 
-    const { items, total_count } = result
+    const {items, total_count} = result
 
     this.pagination.total = total_count
 
     return items
   }
 
-  searchGitee() {}
+  searchGitee() {
+  }
 
   resetPagination() {
     this.pagination = {
@@ -185,7 +191,7 @@ class InstallCommand extends Command {
   }
 
   async searchTags() {
-    const { per_page, page } = this.pagination
+    const {per_page, page} = this.pagination
     const params = {
       per_page,
       page,
@@ -193,7 +199,7 @@ class InstallCommand extends Command {
 
     const result = await this.platformApi.searchTags(this.selectProject.name, params)
 
-    this.tagList = result.map(({ name }, index) => {
+    this.tagList = result.map(({name}, index) => {
       const newIndex = (this.pagination.page - 1) * this.pagination.per_page + index + 1
 
       return {
@@ -227,9 +233,49 @@ class InstallCommand extends Command {
     } else if (tag === "next") {
       this.pagination.page += 1
       await this.searchTags()
+    } else {
+      this.selectProject.tag = tag
     }
 
+
     return tag
+  }
+
+  async downloadRepository(fullName, tag) {
+
+    const spinner = ora("git clone is starting...").start()
+
+    try {
+      await this.platformApi.cloneRepository(fullName, tag)
+
+      spinner.stop();
+
+      log.info(`${fullName} is already downloaded in current directory.\n`)
+
+      log.info("Enjoy your time!")
+    } catch (err) {
+      spinner.stop();
+      printErrorLog(err)
+    }
+  }
+
+  async installDependencies() {
+    const spinner = ora("Install dependencies is starting...").start()
+
+    try {
+      await this.platformApi.installDependencies(process.cwd(), this.selectProject.name)
+
+      spinner.stop();
+
+      log.info("Install dependencies complete~")
+    } catch (err) {
+      spinner.stop();
+      printErrorLog(err)
+    }
+  }
+
+  async running() {
+    await this.platformApi.runRepository(process.cwd(), this.selectProject.name)
   }
 }
 

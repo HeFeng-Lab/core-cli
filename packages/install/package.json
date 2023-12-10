@@ -30,6 +30,8 @@
   },
   "dependencies": {
     "@code-lab/command": "^0.3.0",
-    "@code-lab/utils": "^0.3.3"
+    "@code-lab/utils": "^0.3.3",
+    "execa": "^8.0.1",
+    "ora": "^7.0.1"
   }
 }

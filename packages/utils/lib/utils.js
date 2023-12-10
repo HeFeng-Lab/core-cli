@@ -11,3 +11,9 @@ export const readFileInfo = (relativePath) => {
   const file = fse.readJsonSync(filePath)
   return file
 }
+
+export const getProjectPath = (cwd, fullName) => {
+  const projectName = fullName.split('/')[1];
+
+  return path.resolve(cwd, projectName);
+}
