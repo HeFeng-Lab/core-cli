@@ -28,7 +28,7 @@ export default class GitServer {
   getToken () {
     return makePassword({
       message: 'Please enter token',
-      validate(value) {
+      validate (value) {
         return !!value.length;
       },
     });
@@ -69,12 +69,28 @@ export default class GitServer {
 
     const projectPath = getProjectPath(cwd, fullName);
 
-    log.verbose("projectPath: " + projectPath)
+    this.utilName = this.checkInstallUtilName(projectPath)
 
     if (pathExistsSync(projectPath)) {
-      return await execa('pnpm', ['install', '--registry=https://registry.npmmirror.com'], { cwd: projectPath });
+      return await execa(this.utilName, ['install', '--registry=https://registry.npmmirror.com'], { cwd: projectPath });
     }
     return null;
+  }
+
+  checkInstallUtilName (projectPath) {
+    let dirs = fs.readdirSync(projectPath);
+
+    const utilsKeys = {
+      "pnpm-lock.yaml": "pnpm",
+      "yarn.lock": "yarn",
+      "package-lock.json": "npm",
+    }
+
+    const item = dirs.find((fileName) => !!utilsKeys[fileName])
+
+    let utilName = item && utilsKeys[item] || "npm"
+
+    return utilName
   }
 
   async runRepository (cwd, fullName) {
@@ -85,18 +101,18 @@ export default class GitServer {
       const { scripts, bin, name } = pkg
 
       if (bin) {
-        await execa('pnpm', ['install', '-g', name, "--registry=https://registry.npmmirror.com"], {
+        await execa(this.utilName, ['install', '-g', name, "--registry=https://registry.npmmirror.com"], {
           cwd: projectPath,
           stdout: "inherit"
         })
       }
 
       if (scripts && scripts.dev) {
-        return execa('pnpm', ['run', 'dev'], { cwd: projectPath, stdout: 'inherit' });
+        return execa(this.utilName, ['run', 'dev'], { cwd: projectPath, stdout: 'inherit' });
       } else if (scripts && scripts.start) {
-        return execa('pnpm', ['start'], { cwd: projectPath, stdout: 'inherit' });
+        return execa(this.utilName, ['start'], { cwd: projectPath, stdout: 'inherit' });
       } else if (scripts && scripts.serve) {
-        return execa('pnpm', ['run', 'serve'], { cwd: projectPath, stdout: 'inherit' });
+        return execa(this.utilName, ['run', 'serve'], { cwd: projectPath, stdout: 'inherit' });
       } else {
         log.warn("running command is not found!");
       }
