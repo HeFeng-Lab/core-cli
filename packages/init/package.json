@@ -1,6 +1,6 @@
 {
   "name": "@code-lab/init",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "description": "init project",
   "author": "hefeng6500 <2443992009@qq.com>",
   "homepage": "https://github.com/HeFeng-Lab/core-cli#readme",
@@ -29,8 +29,8 @@
     "access": "public"
   },
   "dependencies": {
-    "@code-lab/command": "^0.3.0",
-    "@code-lab/utils": "^0.3.3",
+    "@code-lab/command": "^0.4.0",
+    "@code-lab/utils": "^0.4.0",
     "chalk": "^5.3.0",
     "execa": "^8.0.1",
     "ora": "^7.0.1",
