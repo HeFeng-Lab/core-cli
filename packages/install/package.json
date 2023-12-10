@@ -1,6 +1,6 @@
 {
   "name": "@code-lab/install",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "description": "> TODO: description",
   "author": "hefeng6500 <2443992009@qq.com>",
   "homepage": "https://github.com/HeFeng-Lab/core-cli#readme",
@@ -30,7 +30,7 @@
   },
   "dependencies": {
     "@code-lab/command": "^0.4.0",
-    "@code-lab/utils": "^0.4.1",
+    "@code-lab/utils": "^0.4.2",
     "execa": "^8.0.1",
     "ora": "^7.0.1"
   }
